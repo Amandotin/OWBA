@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10172b">
+<title>OWBA | Class 12 IT (802)</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141d34;--panel2:#1a2743;--ink:#f4f7ff;--muted:#aab6d0;
+  --line:rgba(190,207,255,.15);--cyan:#63e6e2;--violet:#a78bfa;--green:#5ee0a0;
+  --red:#ff858e;--gold:#ffd166;--shadow:0 18px 55px rgba(0,0,0,.25)
+}
+*{box-sizing:border-box}
+body{margin:0;background:
+ radial-gradient(ellipse at 12% 0%,rgba(99,230,226,.13),transparent 32rem),
+ radial-gradient(ellipse at 90% 10%,rgba(167,139,250,.16),transparent 30rem),
+ var(--bg);color:var(--ink);font:16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+button{font:inherit}
+.shell{max-width:1050px;margin:auto;padding:26px 18px 60px}
+.hero{position:relative;overflow:hidden;padding:30px;border:1px solid var(--line);border-radius:25px;
+ background:linear-gradient(125deg,rgba(25,43,72,.96),rgba(25,26,59,.96));box-shadow:var(--shadow)}
+.hero:after{content:"⚡";position:absolute;right:32px;top:10px;font-size:112px;opacity:.08;transform:rotate(12deg)}
+.kicker{display:inline-flex;align-items:center;gap:8px;color:var(--cyan);font-weight:800;
+ letter-spacing:.13em;text-transform:uppercase;font-size:11px}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.08;margin:13px 0 10px;letter-spacing:-.04em}
+h1 span{color:var(--cyan)}
+.lead{margin:0;color:#c2cce1;max-width:650px}
+.hero-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+.tag{border:1px solid var(--line);background:rgba(255,255,255,.055);padding:7px 11px;border-radius:999px;color:#dce5fa;font-size:12px;font-weight:700}
+.dashboard{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px;margin:16px 0}
+.stat{background:rgba(20,29,52,.88);border:1px solid var(--line);border-radius:17px;padding:15px 17px}
+.stat small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}
+.stat strong{display:block;font-size:25px;margin-top:3px}
+.progress-track{height:8px;background:#263451;border-radius:99px;overflow:hidden;margin-top:9px}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:99px;transition:width .25s}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 2px 12px}
+.toolbar p{margin:0;color:var(--muted);font-size:13px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);border-radius:11px;padding:9px 13px;background:#1b2946;color:var(--ink);font-weight:750;cursor:pointer;transition:.18s}
+.btn:hover{transform:translateY(-1px);border-color:rgba(99,230,226,.6)}
+.btn.primary{background:linear-gradient(110deg,#2d8f9b,#5c55bc);border:0;color:white}
+.btn.subtle{background:transparent;color:#cbd6eb}
+.question{background:linear-gradient(145deg,rgba(21,31,55,.98),rgba(17,26,47,.98));border:1px solid var(--line);
+ border-radius:19px;padding:20px;margin:12px 0;box-shadow:0 8px 25px rgba(0,0,0,.12);transition:border-color .2s}
+.question.answered{border-color:rgba(99,230,226,.35)}
+.qtop{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+.qnum{font-size:11px;color:var(--cyan);font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.qmark{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:4px 8px}
+.qtext{font-size:17px;line-height:1.45;font-weight:750;margin:0 0 15px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.option{display:flex;align-items:flex-start;gap:10px;text-align:left;width:100%;min-height:48px;
+ border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:rgba(255,255,255,.035);
+ color:#e7edfa;cursor:pointer;transition:.16s}
+.option:hover{background:rgba(99,230,226,.08);border-color:rgba(99,230,226,.5)}
+.option .letter{flex:0 0 25px;height:25px;display:grid;place-items:center;border-radius:8px;
+ background:#263653;color:#cbd7ed;font-size:12px;font-weight:900}
+.option.selected{border-color:var(--cyan);background:rgba(99,230,226,.12)}
+.option.selected .letter{background:var(--cyan);color:#10202b}
+.option.correct{border-color:var(--green);background:rgba(94,224,160,.12)}
+.option.correct .letter{background:var(--green);color:#09251a}
+.option.wrong{border-color:var(--red);background:rgba(255,133,142,.1)}
+.option.wrong .letter{background:var(--red);color:#351217}
+.option:disabled{cursor:default;opacity:1}
+.qactions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.qactions .btn{font-size:13px;padding:8px 12px}
+.feedback{display:none;margin-top:13px;padding:11px 13px;border-radius:11px;font-size:14px;font-weight:700}
+.explanation{display:block;font-weight:500;margin-top:6px;line-height:1.55}.feedback.good{display:block;background:rgba(94,224,160,.1);color:#91f0bc;border:1px solid rgba(94,224,160,.24)}
+.feedback.bad{display:block;background:rgba(255,133,142,.1);color:#ffabb1;border:1px solid rgba(255,133,142,.22)}
+.feedback.neutral{display:block;background:rgba(99,230,226,.08);color:#a9f5ef;border:1px solid rgba(99,230,226,.2)}
+.finish{display:none;text-align:center;margin-top:22px;padding:25px;border-radius:20px;border:1px solid var(--line);
+ background:linear-gradient(135deg,rgba(36,75,91,.5),rgba(61,47,105,.5))}
+.finish h2{margin:5px 0;font-size:27px}.finish p{color:var(--muted);margin:5px 0 15px}
+footer{text-align:center;color:#8290aa;font-size:12px;margin-top:28px}
+@media(max-width:700px){.dashboard{grid-template-columns:1fr 1fr}.dashboard .stat:first-child{grid-column:1/-1}.options{grid-template-columns:1fr}.hero{padding:23px}.hero:after{right:15px;font-size:75px}.question{padding:16px}.qtext{font-size:16px}}
+@media print{body{background:white;color:#111}.hero,.stat,.question{background:white;color:#111;box-shadow:none;border:1px solid #ccc}.lead,.toolbar p,.stat small,.qmark,footer{color:#444}.btn{display:none}.option{color:#111;background:white;border:1px solid #ccc}.feedback{display:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div class="kicker">✦ Class 12 · IT (802) · Practice Arena</div>
+    <h1>OWBA <span>CHALLENGE</span></h1>
+    <p class="lead">Think smart. Choose wisely. Test what you know about web applications and services.</p>
+    <div class="hero-tags">
+      <span class="tag">🎯 23 Questions</span><span class="tag">⭐ 1 Point Each</span><span class="tag">⚡ Instant Feedback</span>
+    </div>
+  </header>
+
+  <section class="dashboard" aria-label="Quiz progress">
+    <div class="stat"><small>Progress</small><strong id="progressText">0 / 23</strong><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div></div>
+    <div class="stat"><small>Your Score</small><strong id="scoreText">0 / 23</strong></div>
+    <div class="stat"><small>Attempted</small><strong id="attemptedText">0</strong></div>
+  </section>
+
+  <div class="toolbar">
+    <p>Choose an option for each question, then tap <b>Check Answer</b>.</p>
+    <div class="tools">
+      <button class="btn subtle" id="revealAll" type="button">Reveal all answers</button>
+      <button class="btn subtle" id="reset" type="button">↻ Start again</button>
+    </div>
+  </div>
+
+  <main id="quiz"></main>
+  <section class="finish" id="finish">
+    <div class="kicker">✦ Quest completed</div>
+    <h2 id="finishTitle">Well played!</h2>
+    <p id="finishMessage"></p>
+    <button class="btn primary" type="button" id="finishReset">Try again</button>
+  </section>
+  <footer>OWBA · Operating Web Based Application · Learn, practise and level up your IT skills.</footer>
+</div>
+<script>
+const questions = [
+  {
+    "q": "Which of the following web-based applications requires financial online transactions?",
+    "options": [
+      "E-governance portals",
+      "Online tutorials",
+      "Online reservation systems",
+      "Online tests"
+    ],
+    "answer": 2,
+    "explanation": "Online reservation systems let users book services such as tickets and usually pay online through a payment gateway. The other options mainly provide information or learning and do not normally require a booking payment."
+  },
+  {
+    "q": "Which of the following is NOT an example of an online reservation system?",
+    "options": [
+      "Airline ticket booking",
+      "Bus ticket booking",
+      "Tour and travel booking",
+      "Watching a video tutorial on Khan Academy"
+    ],
+    "answer": 3,
+    "explanation": "A video tutorial on Khan Academy is an online learning resource, not a reservation service. Airline, bus, and tour bookings involve reserving a seat, ticket, or service."
+  },
+  {
+    "q": "Which of the following is an advantage of online reservation for the service provider?",
+    "options": [
+      "Price comparison",
+      "Seat selection",
+      "Requires less staffing",
+      "Frequent user discount"
+    ],
+    "answer": 2,
+    "explanation": "Online reservation systems automate bookings and payments, which can reduce the amount of manual work and staffing needed by the service provider. Price comparison, seat selection, and user discounts are generally benefits for customers."
+  },
+  {
+    "q": "Which of the following is a recommended way to make a password safer?",
+    "options": [
+      "Mix uppercase and lowercase letters with numbers and special characters",
+      "Use the name of a family member",
+      "Share it with close friends for safekeeping",
+      "Keep it written near the computer"
+    ],
+    "answer": 0,
+    "explanation": "A stronger password combines uppercase and lowercase letters, numbers, and special characters. Avoid personal information, sharing passwords, or keeping them where others can see them."
+  },
+  {
+    "q": "In the IRCTC registration form, the fields marked with an asterisk (*) are:",
+    "options": [
+      "Optional",
+      "Mandatory",
+      "Automatically filled",
+      "Used only for verification"
+    ],
+    "answer": 1,
+    "explanation": "An asterisk (*) beside a field in a registration form indicates that the field is required. The user must complete it before submitting the form."
+  },
+  {
+    "q": "E-Governance refers to:",
+    "options": [
+      "Use of paper forms for government work",
+      "Use of ICT tools by the government to provide governance and services to citizens",
+      "Sale of government property online",
+      "Online shopping through government websites"
+    ],
+    "answer": 1,
+    "explanation": "E-Governance means using information and communication technology (ICT) to deliver government information and services and support interactions between the government and citizens."
+  },
+  {
+    "q": "The national satellite-based computer network that gave the main thrust to e-Governance in India was launched in:",
+    "options": [
+      "1975",
+      "1980",
+      "1987",
+      "2006"
+    ],
+    "answer": 2,
+    "explanation": "NICNET, a satellite-based computer communication network used by the National Informatics Centre, was launched in 1987 and helped expand computerised communication for government services."
+  },
+  {
+    "q": "The National e-Governance Plan (NeGP) was formulated in 2006 by:",
+    "options": [
+      "NIC and MoCIT",
+      "NICNET and DISNIC",
+      "IRCTC and CRIS",
+      "Department of Information Technology (DIT) and DAR&PG"
+    ],
+    "answer": 3,
+    "explanation": "The National e-Governance Plan (NeGP), formulated in 2006, involved the Department of Information Technology (DIT) and the Department of Administrative Reforms and Public Grievances (DAR&PG)."
+  },
+  {
+    "q": "The portal that provides single-window access to information and services of various Indian government entities is:",
+    "options": [
+      "The Government of India Web Directory",
+      "The National Portal of India (india.gov.in)",
+      "The NCERT portal",
+      "The IRCTC portal"
+    ],
+    "answer": 1,
+    "explanation": "The National Portal of India (india.gov.in) acts as a single point of access to information and services from different government ministries, departments, and other entities."
+  },
+  {
+    "q": "Online shopping is an example of:",
+    "options": [
+      "An e-governance application",
+      "An online tutorial",
+      "An e-commerce application",
+      "A webinar"
+    ],
+    "answer": 2,
+    "explanation": "Online shopping involves buying and selling goods or services over the Internet, so it is an example of e-commerce."
+  },
+  {
+    "q": "Which situation best justifies the use of online shopping?",
+    "options": [
+      "The store you need is nearby and open",
+      "The product you require is not available in your local market",
+      "You want to touch and feel the product before buying",
+      "You do not have an Internet connection"
+    ],
+    "answer": 1,
+    "explanation": "Online shopping is useful when a required product is unavailable in the local market. It lets customers search for and order products from sellers in other locations."
+  },
+  {
+    "q": "Which of the following is NOT mentioned as an alternative payment method for online shopping?",
+    "options": [
+      "Net banking",
+      "E-gift voucher",
+      "Cash on delivery",
+      "Barter exchange"
+    ],
+    "answer": 3,
+    "explanation": "Barter means exchanging goods or services directly without using money. Net banking, e-gift vouchers, and cash on delivery are payment methods that may be offered by online shopping sites."
+  },
+  {
+    "q": "In online tutoring, the students and teachers are:",
+    "options": [
+      "Always in the same classroom",
+      "Connected through a printed course",
+      "Present at the same time in a laboratory",
+      "At physically different locations, connected via the Internet"
+    ],
+    "answer": 3,
+    "explanation": "Online tutoring connects learners and teachers over the Internet, so they can take part from different physical locations."
+  },
+  {
+    "q": "Real-time lectures in which users can participate, ask questions and get their queries answered are called:",
+    "options": [
+      "Video tutorials",
+      "Slide tutorials",
+      "Webinars",
+      "Interactive tutorials"
+    ],
+    "answer": 2,
+    "explanation": "A webinar is a seminar or lecture conducted online. Participants can join in real time, ask questions, and interact with the presenter."
+  },
+  {
+    "q": "Which pair of sites provides free online courses in collaboration with universities across the globe?",
+    "options": [
+      "Udacity and w3schools",
+      "Khan Academy and GCFLearnFree",
+      "Coursera and edX",
+      "w3schools and NCERT"
+    ],
+    "answer": 2,
+    "explanation": "Coursera and edX host courses from universities and other institutions around the world. Some courses offer free access or auditing, while certificates and some features may require payment."
+  },
+  {
+    "q": "Which is the correct order of the four main phases of web application development?",
+    "options": [
+      "Design, Requirement Definition, Implementation, Testing",
+      "Requirement Definition, Implementation, Design, Testing",
+      "Requirement Definition, Design, Implementation, Testing",
+      "Implementation, Design, Testing, Requirement Definition"
+    ],
+    "answer": 2,
+    "explanation": "The usual sequence is to define requirements first, design the solution, implement it, and then test it. Each phase uses the decisions made in the preceding phase."
+  },
+  {
+    "q": "In the Requirement Definition phase, defining the scope of the application focuses on:",
+    "options": [
+      "How the application will be designed",
+      "What the application must do",
+      "How the application will be tested",
+      "How the database will be connected"
+    ],
+    "answer": 1,
+    "explanation": "Requirement definition identifies the purpose, scope, and functions of the application—in other words, what the application must do."
+  },
+  {
+    "q": "During the feasibility check of a web application project, the project is checked for:",
+    "options": [
+      "Technical and economic feasibility",
+      "Colour and font feasibility",
+      "Hardware cost only",
+      "Number of web pages only"
+    ],
+    "answer": 0,
+    "explanation": "A feasibility check considers whether a project is practical. Technical feasibility asks whether it can be built with available technology and skills; economic feasibility considers whether the costs are justified."
+  },
+  {
+    "q": "Which of the following is the safest password?",
+    "options": [
+      "Mohan (father's name)",
+      "Tr@in#2Book9",
+      "12345",
+      "Password"
+    ],
+    "answer": 1,
+    "explanation": "A strong password should be difficult to guess and should combine different character types. Among the given options, Tr@in#2Book9 is the strongest; never reuse a sample password as your real password."
+  },
+  {
+    "q": "A student wants one website from which she can reach the websites of different states, the judiciary and the legislature. Which site should she use?",
+    "options": [
+      "The IRCTC portal",
+      "The Flipkart website",
+      "The Government of India Web Directory (goidirectory.nic.in)",
+      "The Khan Academy website"
+    ],
+    "answer": 2,
+    "explanation": "The Government of India Web Directory (goidirectory.nic.in) provides links to websites of different state governments and government institutions, including the judiciary and legislature."
+  },
+  {
+    "q": "A teacher wants single-window access to the information and services of various ministries and departments. Which portal should the teacher visit?",
+    "options": [
+      "w3schools.com",
+      "coursera.org",
+      "The NCERT portal",
+      "The National Portal of India (india.gov.in)"
+    ],
+    "answer": 3,
+    "explanation": "The National Portal of India (india.gov.in) provides single-window access to information and services from ministries and departments of the Government of India."
+  },
+  {
+    "q": "Meera has added three items to her shopping cart but now does not want one of them. What can she do?",
+    "options": [
+      "She must cancel her account",
+      "She can remove that product from the cart and then proceed to payment",
+      "She must pay for all three items",
+      "She must restart her browser and lose all items"
+    ],
+    "answer": 1,
+    "explanation": "Most shopping carts let users remove an item they no longer want before proceeding to checkout. The customer can then pay for the items that remain in the cart."
+  },
+  {
+    "q": "Which website provides online learning resources in the form of e-books, journals, question papers and children's books?",
+    "options": [
+      "Flipkart",
+      "NCERT Portal",
+      "eBay",
+      "MakeMyTrip"
+    ],
+    "answer": 1,
+    "explanation": "The NCERT Portal provides educational resources such as e-books, journals, question papers, and children's books. The other listed websites are primarily shopping, marketplace, or travel services."
+  }
+];
+const letters = ["a)", "b)", "c)", "d)"];
+const quiz = document.getElementById("quiz");
+const state = questions.map(() => ({choice:null, checked:false, correct:false, revealed:false}));
+const progressText = document.getElementById("progressText");
+const progressFill = document.getElementById("progressFill");
+const scoreText = document.getElementById("scoreText");
+const attemptedText = document.getElementById("attemptedText");
+const finish = document.getElementById("finish");
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[ch]);
+}
+function updateStats(){
+  const attempted = state.filter(s => s.checked).length;
+  const score = state.filter(s => s.correct).length;
+  progressText.textContent = `${attempted} / ${questions.length}`;
+  progressFill.style.width = `${attempted / questions.length * 100}%`;
+  scoreText.textContent = `${score} / ${questions.length}`;
+  attemptedText.textContent = attempted;
+  if(attempted === questions.length){
+    finish.style.display = "block";
+    document.getElementById("finishTitle").textContent =
+      score === questions.length ? "Perfect score! 🏆" : score >= 17 ? "Great work! 🌟" : "Practice makes progress! 💪";
+    document.getElementById("finishMessage").textContent = `You scored ${score} out of ${questions.length}. Review any questions you missed and give it another try.`;
+  } else {
+    finish.style.display = "none";
+  }
+}
+function revealAnswer(index, card, feedback, buttons){
+  const item = questions[index];
+  state[index].revealed = true;
+  feedback.className = "feedback neutral";
+  feedback.innerHTML = `<strong>Correct answer: ${letters[item.answer]} ${escapeHtml(item.options[item.answer])}</strong><span class="explanation">${escapeHtml(item.explanation)}</span>`;
+  buttons.forEach(b => { if(b.dataset.role === "reveal") b.textContent = "Hide answer"; });
+}
+function render(){
+  quiz.innerHTML = "";
+  questions.forEach((item,index)=>{
+    const card = document.createElement("section");
+    card.className = "question";
+    const top = document.createElement("div"); top.className = "qtop";
+    const num = document.createElement("span"); num.className = "qnum"; num.textContent = `QUESTION ${String(index+1).padStart(2,"0")}`;
+    const mark = document.createElement("span"); mark.className = "qmark"; mark.textContent = "1 point";
+    top.append(num,mark);
+    const title = document.createElement("p"); title.className = "qtext"; title.textContent = item.q;
+    const options = document.createElement("div"); options.className = "options";
+    const feedback = document.createElement("div"); feedback.className = "feedback";
+    const actions = document.createElement("div"); actions.className = "qactions";
+    const check = document.createElement("button"); check.className = "btn primary"; check.type = "button"; check.textContent = "Check Answer";
+    const reveal = document.createElement("button"); reveal.className = "btn"; reveal.type = "button"; reveal.textContent = "Show answer"; reveal.dataset.role = "reveal";
+    const buttons = [check,reveal];
+
+    item.options.forEach((value,j)=>{
+      const option = document.createElement("button");
+      option.type = "button"; option.className = "option";
+      option.innerHTML = `<span class="letter">${letters[j]}</span><span></span>`;
+      option.querySelector("span:last-child").textContent = value;
+      if(state[index].choice === j) option.classList.add("selected");
+      if(state[index].checked){
+        option.disabled = true;
+        if(j === item.answer) option.classList.add("correct");
+        else if(j === state[index].choice) option.classList.add("wrong");
+      }
+      option.addEventListener("click",()=>{
+        if(state[index].checked) return;
+        state[index].choice = j;
+        render();
+        document.getElementById(`q${index}`).scrollIntoView({block:"nearest",behavior:"smooth"});
+      });
+      options.appendChild(option);
+    });
+
+    check.disabled = state[index].checked;
+    if(state[index].checked) check.textContent = state[index].correct ? "✓ Correct" : "Answer checked";
+    check.addEventListener("click",()=>{
+      if(state[index].choice === null){
+        feedback.className = "feedback neutral";
+        feedback.textContent = "Choose an option first, then check your answer.";
+        return;
+      }
+      state[index].checked = true;
+      state[index].correct = state[index].choice === item.answer;
+      render();
+      updateStats();
+    });
+    reveal.addEventListener("click",()=>{
+      state[index].revealed = !state[index].revealed;
+      render();
+    });
+    if(state[index].revealed){
+      feedback.className = "feedback neutral";
+      feedback.innerHTML = `<strong>Correct answer: ${letters[item.answer]} ${escapeHtml(item.options[item.answer])}</strong><span class="explanation">${escapeHtml(item.explanation)}</span>`;
+      reveal.textContent = "Hide answer";
+    } else if(state[index].checked){
+      feedback.className = state[index].correct ? "feedback good" : "feedback bad";
+      feedback.innerHTML = state[index].correct
+        ? `<strong>✓ Correct! You earned 1 point.</strong><span class="explanation">${escapeHtml(item.explanation)}</span>`
+        : `<strong>Not quite. Correct answer: ${letters[item.answer]} ${escapeHtml(item.options[item.answer])}</strong><span class="explanation">${escapeHtml(item.explanation)}</span>`;
+    }
+    actions.append(check,reveal);
+    card.id = `q${index}`;
+    card.append(top,title,options,actions,feedback);
+    quiz.appendChild(card);
+  });
+}
+function resetQuiz(){
+  state.forEach(s=>{s.choice=null;s.checked=false;s.correct=false;s.revealed=false;});
+  render();updateStats();window.scrollTo({top:0,behavior:"smooth"});
+}
+document.getElementById("reset").addEventListener("click",resetQuiz);
+document.getElementById("finishReset").addEventListener("click",resetQuiz);
+document.getElementById("revealAll").addEventListener("click",()=>{
+  state.forEach(s=>s.revealed=true);render();
+});
+render();updateStats();
+</script>
+</body>
+</html>
